@@ -8,7 +8,7 @@ test('desktop: capture the full experience and check browser errors', async ({ p
   await expect(page.getByRole('heading', { name: /Build a workspace/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /Not sure where to start/ })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('desktop-full.png'), fullPage: true, animations: 'disabled' });
-  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await page.getByRole('tab', { name: /^Accessories$/ }).click();
   await page.getByRole('button', { name: /34” Curved Monitor/ }).click();
   await expect(page.getByRole('img', { name: /ultrawide/ })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('desktop-accessories.png'), fullPage: true, animations: 'disabled' });
@@ -66,7 +66,7 @@ test('small phones and tablets keep all controls inside the viewport', async ({ 
   for (const width of [320, 375, 768]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto('/');
-    await page.getByRole('tab', { name: /03 Accessories/ }).click();
+    await page.getByRole('tab', { name: /^Accessories$/ }).click();
     await expect(page.getByRole('button', { name: /Smart Desk Lamp/ })).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, `Unexpected horizontal overflow at ${width}px`).toBeLessThanOrEqual(1);
