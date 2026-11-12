@@ -275,3 +275,81 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* A single purposeful dark touchpoint for the guided experience. */
+.finder-callout {
+  width: 100%; text-align: left; display: flex; align-items: center; gap: 15px;
+  padding: 18px 19px; margin-top: 25px; border: 1px solid #172c38;
+  border-radius: 9px; background: #182a32; color: #fff;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.finder-callout:hover { background: #234352; transform: translateY(-2px); box-shadow: 0 12px 28px #172e3b20; }
+.finder-callout-icon { width: 46px; height: 46px; border-radius: 8px; flex-shrink: 0; display: grid; place-items: center; background: #315a6d; color: #e2f3fc; }
+.finder-callout-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.finder-callout-copy strong { font-size: 13px; letter-spacing: -.01em; }
+.finder-callout-copy small { color: #a9bbc4; font-size: 11px; line-height: 1.45; }
+.finder-callout-action { color: #fff; font-weight: 750; display: inline-flex; align-items: center; gap: 9px; font-size: 11px; white-space: nowrap; }
+.preset-box { margin-top: 14px; }
+.finder-topline { display: flex; align-items: center; gap: 12px; margin: 29px 0 22px; }
+.finder-intro-icon { display: grid; place-items: center; background: #e9f3f7; width: 43px; height: 43px; border-radius: 6px; color: #216d95; }
+.finder-topline > div:last-child { display: flex; flex-direction: column; gap: 5px; }
+.finder-topline strong { font-size: 13px; }
+.finder-topline span { font-size: 10px; color: #84949b; }
+.finder-progress { height: 4px; background: #e4edef; border-radius: 4px; overflow: hidden; margin: 0 0 30px; }
+.finder-progress > div { height: 100%; background: #2278a7; transition: width .32s ease; }
+.finder-step, .finder-result { min-height: 350px; }
+.finder-step .section-label { color: #2581ab; }
+.finder-step h2, .finder-result h2 { margin-top: 16px; }
+.finder-choices { display: flex; flex-direction: column; gap: 11px; padding-top: 9px; }
+.finder-choice { background: #fff; border: 1px solid #dce7eb; border-radius: 8px; display: flex; gap: 16px; padding: 17px; align-items: center; width: 100%; text-align: left; transition: background .18s, border-color .18s, transform .18s; }
+.finder-choice:hover, .finder-choice:focus-visible { border-color: #4389ad; background: #f2f8fb; transform: translateX(3px); }
+.finder-choice-icon { flex-shrink: 0; width: 44px; height: 44px; background: #f0f4f6; border-radius: 6px; color: #2b627d; display: grid; place-items: center; }
+.finder-choice > span:nth-child(2) { display: flex; flex-direction: column; flex: 1; gap: 6px; }
+.finder-choice strong { font-size: 13px; color: #172c36; }
+.finder-choice small { font-size: 11px; color: #74858d; line-height: 1.5; }
+.finder-choice-arrow { color: #4c819e; flex-shrink: 0; }
+.finder-navigation { display: flex; justify-content: space-between; align-items: center; gap: 15px; border-top: 1px solid var(--line); padding-top: 19px; margin-top: 19px; }
+.finder-navigation button { background: none; border: 0; display: flex; align-items: center; gap: 7px; color: #476e82; padding: 5px 0; font-size: 11px; font-weight: 750; }
+.finder-navigation > span { font-size: 10px; letter-spacing: .1em; color: #8298a2; font-weight: 800; }
+.finder-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 22px; }
+.finder-compare-card { border: 1px solid #dce6e9; border-radius: 8px; overflow: hidden; min-width: 0; }
+.finder-compare-card.recommended { border: 1.5px solid #2983ac; background: #f5fafd; }
+.finder-card-label { display: flex; align-items: center; gap: 5px; padding: 11px 10px; font-size: 9px; letter-spacing: .07em; font-weight: 850; color: #667e8a; }
+.recommended .finder-card-label { color: #176e96; }
+.finder-scene { background: #eff3f5; display: block; overflow: hidden; }
+.finder-scene .workspace-svg { width: 100%; height: auto; display: block; }
+.finder-compare-total { display: flex; align-items: baseline; justify-content: center; gap: 4px; padding: 12px 5px; border-top: 1px solid #e1e8ec; }
+.finder-compare-total strong { font-size: 22px; letter-spacing: -.045em; }
+.finder-compare-total small { font-size: 10px; color: #77909c; }
+.finder-difference { background: #f0f5f7; color: #527286; padding: 10px 13px; border-radius: 5px; font-size: 11px; line-height: 1.55; margin: 11px 0 24px; }
+.finder-why-title { font-size: 14px; letter-spacing: -.02em; margin: 20px 0 12px; }
+.finder-reasons { display: flex; flex-direction: column; gap: 13px; }
+.finder-reasons > div { display: flex; align-items: start; gap: 10px; }
+.finder-reasons > div > span { flex-shrink: 0; color: #fff; background: #248bb4; border-radius: 50%; width: 20px; height: 20px; display: grid; place-items: center; }
+.finder-reasons p { margin: 0; font-size: 11px; color: #576f7d; line-height: 1.6; }
+.finder-includes { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 14px; }
+.finder-includes > span { color: #78909d; font-size: 9px; font-weight: 850; letter-spacing: .11em; }
+.finder-includes > p { margin: 8px 0 0; color: #314b58; font-size: 11px; line-height: 1.7; }
+.finder-apply { margin-top: 17px; }
+.finder-disclosure { font-size: 10px; color: #8fa0a8; line-height: 1.5; text-align: center; margin: 10px 0 0; }
+.review-actions { flex-wrap: wrap; }
+.review-actions .secondary-action { white-space: nowrap; min-width: 120px; }
+@media(max-width:600px) {
+  .finder-callout { padding: 14px 12px; gap: 10px; }
+  .finder-callout-icon { width: 36px; height: 36px; }
+  .finder-callout-copy strong { font-size: 12px; }
+  .finder-callout-copy small { font-size: 10px; }
+  .finder-callout-action { font-size: 0; gap: 0; }
+  .finder-callout-action svg { width: 20px; }
+  .finder-topline { margin-top: 24px; }
+  .finder-step h2, .finder-result h2 { font-size: 27px; }
+  .finder-choice { padding: 13px; gap: 11px; }
+  .finder-choice-icon { width: 38px; height: 38px; }
+  .finder-compare { gap: 7px; }
+  .finder-card-label { font-size: 8px; padding: 9px 5px; }
+  .finder-compare-total strong { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finder-progress > div { transition: none !important; }
+}
