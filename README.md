@@ -16,6 +16,12 @@ The experience stays deliberately direct. Product cards have clear choices and p
 
 There are also three one-click starting bundles, animated sit/stand and lighting previews, persistent selections, shareable configuration URLs and a downloadable PNG card made from the actual SVG workspace illustration.
 
+## Design direction
+
+The builder is an application, not a marketing landing page. After reviewing the screen, I removed the announcement strip, promotional feature sections and repeated heading/subheading pairs. I kept one clear page title, gave the assembled workspace the largest area and moved recommendations and presets into quiet secondary controls. Type now follows a small, readable scale and avoids tiny labels or unnecessarily heavy headlines.
+
+The visual audit was informed by [Unslop by Damir Sokolovsky](https://github.com/heydamir/unslop) (CC BY 4.0). This project’s interface and illustrations are independently implemented.
+
 ## Built with
 
 - Next.js App Router, React and TypeScript
