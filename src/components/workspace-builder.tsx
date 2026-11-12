@@ -124,7 +124,7 @@ export function WorkspaceBuilder() {
         <div className="header-actions"><span className="demo-flag">Independent concept</span><button className="header-review" onClick={() => setDialog('review')}>My setup <span className="header-count">{products.length}</span></button></div>
       </header>
       <main>
-        <div className="page-intro"><h1 id="page-title">Build a workspace in Bali</h1><span>Choose your desk, chair and extras</span></div>
+        <div className="page-intro"><h1 id="page-title">Build a workspace in Bali</h1></div>
         <section id="builder" className="builder-layout" aria-label="Interactive workspace builder">
           <div className="preview-column">
             <div className="preview-heading"><h2>Your workspace</h2><button className="reset-link" onClick={reset}><RotateCcw size={16}/> Reset</button></div>
