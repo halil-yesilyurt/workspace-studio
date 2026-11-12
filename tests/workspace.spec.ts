@@ -5,9 +5,9 @@ test('configure desks, chairs and accessories and review the rental summary', as
   await expect(page.getByRole('heading', { name: /Build a workspace/ })).toBeVisible();
   await page.getByRole('button', { name: /Dual-Motor Pro Desk/ }).click();
   await expect(page.getByRole('img', { name: /dual motor desk/i })).toBeVisible();
-  await page.getByRole('tab', { name: /02 Chair/ }).click();
+  await page.getByRole('tab', { name: /^Chair$/ }).click();
   await page.getByRole('button', { name: /Comfort Office Chair/ }).click();
-  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await page.getByRole('tab', { name: /^Accessories$/ }).click();
   await page.getByRole('button', { name: /Smart Desk Lamp/ }).click();
   await page.getByRole('button', { name: 'Review my setup' }).click();
   const dialog = page.getByRole('dialog');
@@ -27,9 +27,9 @@ test('presets, sit/stand, lighting, and shared URL all work', async ({ page }) =
   await page.getByRole('button', { name: 'Evening' }).click();
   await expect(page.getByRole('img', { name: /dual motor desk at stand height.*evening lighting/i })).toBeVisible();
   await page.goto('/?desk=dual&chair=comfort&extras=ultrawide%2Clamp&plan=week');
-  await page.getByRole('tab', { name: /02 Chair/ }).click();
+  await page.getByRole('tab', { name: /^Chair$/ }).click();
   await expect(page.getByRole('button', { name: /Comfort Office Chair/ })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await page.getByRole('tab', { name: /^Accessories$/ }).click();
   await expect(page.getByRole('button', { name: /34” Curved Monitor/ })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('button', { name: /27” 4K Monitor/ })).toHaveAttribute('aria-pressed', 'false');
   await expect(page.getByRole('button', { name: 'Weekly' })).toHaveAttribute('aria-pressed', 'true');
@@ -49,7 +49,7 @@ test('mobile configurator stays within the viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Build a workspace/ })).toBeVisible();
-  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await page.getByRole('tab', { name: /^Accessories$/ }).click();
   await page.getByRole('button', { name: /Desk Plant/ }).click();
   await page.getByRole('button', { name: 'Review my setup' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
@@ -72,7 +72,7 @@ test('guided finder explains a recommendation and updates the live scene', async
   await dialog.getByRole('button', { name: /Build this workspace/ }).click();
   await expect(dialog).not.toBeVisible();
   await expect(page.getByRole('img', { name: /dual motor desk.*ultrawide/ })).toBeVisible();
-  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await page.getByRole('tab', { name: /^Accessories$/ }).click();
   await expect(page.getByRole('button', { name: /34” Curved Monitor/ })).toHaveAttribute('aria-pressed', 'true');
 });
 
