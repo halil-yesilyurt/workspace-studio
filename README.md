@@ -1,18 +1,30 @@
-# Workspace Studio
+# Workspace Builder
 
-An interactive workspace configurator built as a frontend challenge for Desent Solutions, inspired by the equipment rental experience at [monis.rent](https://monis.rent).
+A visual equipment-rental planner for the [Desent Solutions developer challenge](https://desent.io/), inspired by [Monis](https://www.monis.rent) in Bali.
 
-## The idea
+**[Try the live builder](https://workspace-studio-dusky.vercel.app)**
 
-Choosing workspace equipment should feel closer to styling a room than filling out a shopping cart. Workspace Studio makes the space itself the interface: desks, chairs, and accessories change in a single composed illustration as you explore options. The quote stays visible and the rental summary is one step away.
+## The product idea
 
-## Stack and approach
+A person arriving in Bali needs a productive desk setup, not another spreadsheet of furniture. The workspace itself is the selection interface: choose a desk, chair and accessories; see them together instantly; and review the rental estimate without losing your place.
 
-- **Next.js App Router + TypeScript** for a small, reliable React application.
-- **Tailwind CSS 4 + handcrafted CSS** for the responsive editorial layout and fine-grained scene styling.
-- **Motion** for intentional transitions and reduced-motion support.
-- **Custom SVG scene** for cohesive product geometry without heavy 3D assets or slow image downloads.
-- **Local state and browser storage** so the configuration survives a refresh without a backend.
+The experience stays deliberately direct. Product cards have clear choices and prices, and the scene reacts without page reloads.
+
+## The extra touch
+
+**Workspace Finder** is a three-question flow about the kind of work, available space and highest priority. It makes an explainable recommendation rather than claiming a made-up AI confidence score. Customers can compare that recommendation with their current setup, including the price difference, before applying it.
+
+There are also three one-click starting bundles, animated sit/stand and lighting previews, persistent selections, shareable configuration URLs and a downloadable PNG card made from the actual SVG workspace illustration.
+
+## Built with
+
+- Next.js App Router, React and TypeScript
+- Tailwind CSS 4 with deliberate custom CSS
+- Motion for small, purposeful transitions (with reduced-motion support)
+- Handcrafted vector product drawings and a responsive SVG workspace scene
+- Browser storage and validated URL parameters, with no account required
+
+The SVG stage is lightweight, scales to mobile, avoids external image dependencies and uses scoped paint IDs so side-by-side previews never interfere with each other.
 
 ## Run locally
 
@@ -21,10 +33,21 @@ npm install
 npm run dev
 ```
 
-Visit http://localhost:3000. For validation run `npm run typecheck`, `npm run lint`, and `npm run build`.
+## Tests
 
-## Tradeoffs and next steps
+```bash
+npm test
+npm run lint
+npm run typecheck
+npm run build
+npx playwright install chromium
+npm run test:e2e
+```
 
-The product options and USD prices in this demo are **illustrative**, not live Monis inventory or pricing. The review screen is a quote preview, **not a real checkout**; no payment or rental order is created. In a production version I would connect the official inventory/pricing API, add delivery-date and location validation, persist sharable setup links, and integrate a verified checkout on the official monis.rent domain. I would also add cross-browser visual regression tests for the custom scene.
+The test suite covers product selection and pricing, URL round-trips, all 36 Finder answer/period combinations, the checkout summary, image download, accessibility interactions, responsive widths down to 320px, and SVG rendering isolation. GitHub Actions runs the checks and saves browser screenshots when the workflow runs.
 
-This project is an independent challenge prototype and is not an official Monis storefront.
+## What I would improve next
+
+This is an **independent interactive prototype**, not a Monis product or checkout. The product lineup and USD amounts are illustrative; no actual inventory, availability, delivery, payment or reservation is connected. In production, I would integrate an authorized live catalog, validate delivery location and dates, use verified product imagery where it improves confidence, and hand off to a secure official checkout. I would also add browser-level accessibility audits and visual-diff baselines.
+
+A polished, honest prototype is more useful than a fake working payment button.
