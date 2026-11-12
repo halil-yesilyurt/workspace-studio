@@ -1,0 +1,31 @@
+name: Generate lockfile snapshot for submission audit
+
+on:
+  push:
+    branches: [chore/submission-readiness]
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve exact dependency versions without running scripts
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Emit lockfile snapshot for the repository update
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const lock = fs.readFileSync('package-lock.json', 'utf8');
+          const encoded = encodeURIComponent(lock);
+          console.log('LOCKFILE_LENGTH=' + lock.length);
+          for (let i = 0; i < encoded.length; i += 6500) {
+            console.log('LOCKCHUNK_' + (i / 6500) + ':' + encoded.slice(i, i + 6500));
+          }
+          NODE
