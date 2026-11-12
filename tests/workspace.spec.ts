@@ -56,3 +56,47 @@ test('mobile configurator stays within the viewport', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
 });
+
+
+test('guided finder explains a recommendation and updates the live scene', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Not sure where to start/i }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByRole('heading', { name: /What does your day look like/ })).toBeVisible();
+  await dialog.getByRole('button', { name: /Design & create/ }).click();
+  await dialog.getByRole('button', { name: /Room to spread out/ }).click();
+  await dialog.getByRole('button', { name: /More screen space/ }).click();
+  await expect(dialog.getByRole('heading', { name: /Meet The Creative Flow/ })).toBeVisible();
+  await expect(dialog.getByText('Why this fits')).toBeVisible();
+  await expect(dialog.getByText('RECOMMENDED')).toBeVisible();
+  await dialog.getByRole('button', { name: /Build this workspace/ }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByRole('img', { name: /dual motor desk.*ultrawide/ })).toBeVisible();
+  await page.getByRole('tab', { name: /03 Accessories/ }).click();
+  await expect(page.getByRole('button', { name: /34” Curved Monitor/ })).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('finder can go backwards without losing its previous answers', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Not sure where to start/i }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('button', { name: /Code & build/ }).click();
+  await dialog.getByRole('button', { name: /A cozy corner/ }).click();
+  await dialog.getByRole('button', { name: /Keep it practical/ }).click();
+  await expect(dialog.getByText(/The Deep Work Desk/)).toBeVisible();
+  await dialog.getByRole('button', { name: /Adjust my answers/ }).click();
+  await expect(dialog.getByRole('heading', { name: /What matters most/ })).toBeVisible();
+  await dialog.getByRole('button', { name: /All-day comfort/ }).click();
+  await expect(dialog.getByText(/The Deep Work Desk/)).toBeVisible();
+});
+
+test('customer can download their workspace summary as a PNG', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Review my setup' }).click();
+  const dialog = page.getByRole('dialog');
+  const transfer = page.waitForEvent('download');
+  await dialog.getByRole('button', { name: 'Save image' }).click();
+  const download = await transfer;
+  expect(download.suggestedFilename()).toBe('my-bali-workspace.png');
+  await expect(dialog.getByRole('status')).toContainText('downloaded');
+});
