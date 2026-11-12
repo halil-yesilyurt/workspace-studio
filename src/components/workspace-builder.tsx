@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import {
-  ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Clock3, Copy,
+  ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronRight, Clock3, Copy, Download,
   ExternalLink, Info, Lightbulb, Link2, Moon, PackageCheck, RotateCcw,
-  Sun, Truck, X,
+  Sun, Truck, X, SlidersHorizontal,
 } from 'lucide-react';
 import {
   accessories, accessoryIds, applyPreset, chairIds, chairs, deskIds, desks,
@@ -15,6 +15,8 @@ import {
   type Setup,
 } from '@/lib/catalog';
 import { ProductArt } from './product-art';
+import { WorkspaceFinder } from './workspace-finder';
+import { downloadSetupCard } from '@/lib/export-setup';
 import { WorkspaceScene, type DeskHeight, type Lighting } from './workspace-scene';
 
 const STORAGE_KEY = 'workspace-studio:config-v2';
@@ -30,11 +32,13 @@ export function WorkspaceBuilder() {
   const [preset, setPreset] = useState<PresetId | null>('essentials');
   const [height, setHeight] = useState<DeskHeight>('sit');
   const [lighting, setLighting] = useState<Lighting>('day');
-  const [dialog, setDialog] = useState<'review' | 'about' | null>(null);
+  const [dialog, setDialog] = useState<'review' | 'about' | 'finder' | null>(null);
   const [message, setMessage] = useState('');
   const [hydrated, setHydrated] = useState(false);
+  const [exportBusy, setExportBusy] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const exportSceneRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -103,6 +107,15 @@ export function WorkspaceBuilder() {
     ];
     void copyText(lines.join('\n'), 'Setup summary copied.');
   }
+  async function saveSetupImage() {
+    const svg = exportSceneRef.current?.querySelector('svg');
+    if (!(svg instanceof SVGSVGElement)) { setMessage('The preview could not be found.'); return; }
+    setExportBusy(true);
+    setMessage('');
+    try { await downloadSetupCard(svg, setup); setMessage('Your workspace image has been downloaded.'); }
+    catch { setMessage('Image export failed in this browser. Try the share link instead.'); }
+    finally { setExportBusy(false); }
+  }
 
   return (
     <div className="site-shell">
@@ -133,6 +146,11 @@ export function WorkspaceBuilder() {
               <div className="scene-controls"><div className="control-group"><span className="control-caption">DESK HEIGHT</span><div className="mini-toggle" role="group" aria-label="Preview desk height"><button className={height === 'sit' ? 'active' : ''} aria-pressed={height === 'sit'} onClick={() => setHeight('sit')}>Sit</button><button className={height === 'stand' ? 'active' : ''} aria-pressed={height === 'stand'} onClick={() => setHeight('stand')}>Stand</button></div></div><div className="control-group"><span className="control-caption">LIGHTING</span><div className="mini-toggle icon-toggle" role="group" aria-label="Preview lighting"><button className={lighting === 'day' ? 'active' : ''} aria-label="Daylight" title="Daylight" aria-pressed={lighting === 'day'} onClick={() => setLighting('day')}><Sun size={15}/></button><button className={lighting === 'evening' ? 'active' : ''} aria-label="Evening" title="Evening" aria-pressed={lighting === 'evening'} onClick={() => setLighting('evening')}><Moon size={15}/></button></div></div></div>
             </div>
             <div className="preview-caption"><span><span className="caption-check">✓</span> Visual changes appear instantly</span><span>Illustrated preview · Not to scale</span></div>
+            <button className="finder-callout" onClick={() => setDialog('finder')}>
+              <span className="finder-callout-icon"><SlidersHorizontal size={20}/></span>
+              <span className="finder-callout-copy"><strong>Not sure where to start?</strong><small>Find your perfect setup in 3 quick questions.</small></span>
+              <span className="finder-callout-action">Find my fit <ArrowRight size={17}/></span>
+            </button>
             <div className="preset-box"><div className="preset-header"><span className="section-label">QUICK START</span><strong>Or start with a curated setup</strong></div><div className="preset-list">{(Object.keys(presets) as PresetId[]).map((id) => <button key={id} className={`preset-card ${preset === id ? 'active' : ''}`} onClick={() => pickPreset(id)} aria-pressed={preset === id}><span className="preset-radio">{preset === id && <Check size={12}/>}</span><strong>{presets[id].label}</strong><small>{presets[id].subtitle}</small></button>)}</div></div>
           </div>
 
@@ -166,19 +184,19 @@ export function WorkspaceBuilder() {
       <AnimatePresence>
         {dialog && <motion.div className="modal-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : .18 }} onMouseDown={(event) => { if (event.target === event.currentTarget) setDialog(null); }}>
           <motion.div ref={dialogRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" initial={{ opacity: 0, y: reduced ? 0 : 24, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: reduced ? 0 : 16, scale: .99 }} transition={{ duration: reduced ? 0 : .24 }}>
-            <div className="modal-top"><span className="section-label">{dialog === 'review' ? 'YOUR WORKSPACE / ORDER SUMMARY' : 'ABOUT THIS CONCEPT'}</span><button ref={closeRef} onClick={() => setDialog(null)} className="modal-close" aria-label="Close dialog"><X size={20}/></button></div>
+            <div className="modal-top"><span className="section-label">{dialog === 'review' ? 'YOUR WORKSPACE / ORDER SUMMARY' : dialog === 'finder' ? 'FIND YOUR WORKSPACE' : 'ABOUT THIS CONCEPT'}</span><button ref={closeRef} onClick={() => setDialog(null)} className="modal-close" aria-label="Close dialog"><X size={20}/></button></div>
             {dialog === 'review' ? <>
               <h2 id="modal-title">Here’s your setup.</h2><p className="modal-subtitle">Your picks, together in one place. Review the details before exploring the real Monis catalog.</p>
-              <div className="review-art"><WorkspaceScene setup={setup} height={height} lighting={lighting}/></div>
+              <div className="review-art" ref={exportSceneRef}><WorkspaceScene setup={setup} height={height} lighting={lighting}/></div>
               <div className="review-items">{products.map((item) => <div className="review-item" key={item.id}><div className="review-item-art"><ProductArt id={item.id}/></div><div><strong>{item.name}</strong><span>{item.detail}</span></div><strong>{formatPrice(setup.plan === 'week' ? item.weekly : item.monthly)}</strong></div>)}</div>
               <div className="review-grand"><span>Estimated {period === 'week' ? 'weekly' : 'monthly'} total <small>Sample prices · USD</small></span><strong>{formatPrice(total)}<small>/{period}</small></strong></div>
               <div className="review-disclaimer"><Info size={18}/><p><strong>This is a design prototype, not a real checkout.</strong> No reservation, payment, delivery or product availability is confirmed here. Official Monis orders happen only at <a href="https://www.monis.rent" target="_blank" rel="noopener noreferrer">monis.rent</a>.</p></div>
-              <div className="review-actions"><button onClick={share} className="secondary-action"><Link2 size={17}/> Share setup</button><button onClick={copySummary} className="secondary-action"><Copy size={17}/> Copy summary</button></div>
+              <div className="review-actions"><button onClick={share} className="secondary-action"><Link2 size={17}/> Share link</button><button onClick={copySummary} className="secondary-action"><Copy size={17}/> Copy list</button><button onClick={() => {void saveSetupImage();}} disabled={exportBusy} className="secondary-action"><Download size={17}/> {exportBusy ? 'Creating…' : 'Save image'}</button></div>
               {message && <p role="status" className="copy-feedback">{message}</p>}
               <a href="https://www.monis.rent" target="_blank" rel="noopener noreferrer" className="official-action">Browse rentals at monis.rent <ExternalLink size={17}/></a>
               <button className="modal-back" onClick={() => setDialog(null)}><ArrowLeft size={15}/> Keep customizing</button>
-            </> : <>
-              <h2 id="modal-title">A better way to choose your work gear.</h2><p className="modal-subtitle">An independent developer challenge concept inspired by the equipment rental experience at monis.rent.</p><div className="about-copy"><p>We replaced a long product list with a live workspace preview. Choose a desk and chair, add useful accessories, and watch your setup come together instantly.</p><p>Preset configurations, sit/stand and lighting previews, shareable setups, rental estimates, and keyboard-friendly controls make the experience easier to explore.</p><p>This demo uses handcrafted product illustrations and illustrative prices. It is not an official Monis website and never processes an order or payment.</p></div><button className="official-action" onClick={() => setDialog(null)}>Back to the builder <ArrowRight size={17}/></button>
+            </> : dialog === 'finder' ? <WorkspaceFinder current={setup} onApply={(next) => { update(next); setStep('extras'); setDialog(null); }} onClose={() => setDialog(null)}/> : <>
+              <h2 id="modal-title">A better way to choose your work gear.</h2><p className="modal-subtitle">An independent developer challenge concept inspired by the equipment rental experience at monis.rent.</p><div className="about-copy"><p>We replaced a long product list with a live workspace preview. Choose a desk and chair, add useful accessories, and watch your setup come together instantly.</p><p>Preset configurations, a guided workspace finder with explainable recommendations, side-by-side comparison, sit/stand and lighting previews, shareable setup links and images, rental estimates, and keyboard-friendly controls make the experience easier to explore.</p><p>This demo uses handcrafted product illustrations and illustrative prices. It is not an official Monis website and never processes an order or payment.</p></div><button className="official-action" onClick={() => setDialog(null)}>Back to the builder <ArrowRight size={17}/></button>
             </>}
           </motion.div>
         </motion.div>}
