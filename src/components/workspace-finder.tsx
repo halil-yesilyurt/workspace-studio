@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   ArrowLeft, ArrowRight, Check, Code2, LaptopMinimal, Maximize2, Minimize2,
   Monitor, Palette, SlidersHorizontal, Sofa, Wallet,
@@ -82,9 +82,9 @@ export function WorkspaceFinder({
       <div style={{ width: `${stage === 3 ? 100 : (stage / 3) * 100}%` }}/>
     </div>
 
-    <AnimatePresence mode="wait" initial={false}>
+    <div className="finder-stage-frame">
       {stage < 3 ? <motion.div key={stage} className="finder-step"
-        initial={{ opacity: 0, x: reduceMotion ? 0 : 12 }}
+        initial={{ opacity: 1, x: reduceMotion ? 0 : 12 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: reduceMotion ? 0 : -12 }}
         transition={{ duration: reduceMotion ? 0 : .22 }}>
@@ -102,7 +102,7 @@ export function WorkspaceFinder({
           })}
         </div>
       </motion.div> : <motion.div key="result" className="finder-result"
-        initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
+        initial={{ opacity: 1, y: reduceMotion ? 0 : 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduceMotion ? 0 : .3 }}>
         <span className="section-label">CURATED FOR YOUR WORKDAY</span>
@@ -127,7 +127,7 @@ export function WorkspaceFinder({
         <button className="official-action finder-apply" onClick={() => onApply(recommendation)}>Build this workspace <ArrowRight size={17}/></button>
         <p className="finder-disclosure">The match is rule-based and transparent. All rental prices are illustrative.</p>
       </motion.div>}
-    </AnimatePresence>
+    </div>
     <div className="finder-navigation">
       <button onClick={() => stage ? setStage((prev) => prev - 1) : onClose()}><ArrowLeft size={15}/>{stage === 0 ? 'Back to builder' : stage === 3 ? 'Adjust my answers' : 'Previous question'}</button>
       {stage < 3 && <span>{stage + 1} OF 3</span>}
