@@ -1,103 +1,126 @@
 'use client';
 
-import { motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import type { Setup } from '@/lib/catalog';
 
-const animated = { initial: { opacity: 0, y: 7 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 7 }, transition: { duration: 0.3 } };
+export type DeskHeight = 'sit' | 'stand';
+export type Lighting = 'day' | 'evening';
 
-export function WorkspaceScene({ setup }: { setup: Setup }) {
-  const reduceMotion = useReducedMotion();
-  const has = (id: string) => setup.accessories.includes(id as Setup['accessories'][number]);
-  const darkDesk = setup.desk === 'walnut';
-  const darkChair = setup.chair === 'graphite';
-  const woodTop = darkDesk ? '#755541' : '#d3b18d';
-  const woodEdge = darkDesk ? '#523b2f' : '#b38b68';
-  const chairMain = darkChair ? '#53605b' : '#b7a797';
-  const chairLight = darkChair ? '#75817b' : '#d3c5b5';
-  const transition = reduceMotion ? { duration: 0 } : { duration: 0.42, ease: 'easeInOut' as const };
+/** One vector stage keeps the visual preview fast, coherent and completely responsive. */
+export function WorkspaceScene({ setup, height = 'sit', lighting = 'day' }: {
+  setup: Setup;
+  height?: DeskHeight;
+  lighting?: Lighting;
+}) {
+  const reduced = useReducedMotion();
+  const stand = height === 'stand';
+  const evening = lighting === 'evening';
+  const has = (id: Setup['accessories'][number]) => setup.accessories.includes(id);
+  const display = has('ultrawide') ? 'ultrawide' : has('monitor') ? 'monitor' : null;
+  const pro = setup.desk === 'dual';
+  const mesh = setup.chair === 'mesh';
+  const lift = stand ? -58 : 0;
+  const transition = { duration: reduced ? 0 : .48, ease: 'easeInOut' as const };
+  const entry = { initial: { opacity: 0, y: reduced ? 0 : 9 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: reduced ? 0 : 9 }, transition: { duration: reduced ? 0 : .25 } };
 
   return (
-    <svg className="workspace-svg" viewBox="0 0 900 650" role="img" aria-label={`Illustrated workspace with ${setup.desk} desk, ${setup.chair} chair and ${setup.accessories.join(', ') || 'no accessories'}`}>
+    <svg viewBox="0 0 900 630" className="workspace-svg" role="img"
+      aria-label={`Workspace preview: ${pro ? 'dual motor' : 'electric'} desk at ${height} height, ${mesh ? 'mesh' : 'comfort'} chair, ${setup.accessories.join(', ') || 'no accessories'}, ${lighting} lighting`}>
       <defs>
-        <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#eeeadf"/><stop offset="1" stopColor="#e2dfd1"/></linearGradient>
-        <linearGradient id="floor" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#d8d3c4"/><stop offset="1" stopColor="#c7c3b4"/></linearGradient>
-        <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#3c514b"/><stop offset="1" stopColor="#1c302e"/></linearGradient>
-        <filter id="softShadow" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="16"/></filter>
-        <pattern id="grain" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="1" cy="2" r="0.45" fill="#fff" opacity=".28"/></pattern>
+        <linearGradient id="studio-wall" x1="0" x2="0" y1="0" y2="1"><stop stopColor="#fafafa"/><stop offset="1" stopColor="#f0f2f2"/></linearGradient>
+        <linearGradient id="studio-floor" x1="0" x2=".5" y1="0" y2="1"><stop stopColor="#e9ebec"/><stop offset="1" stopColor="#d9dfe1"/></linearGradient>
+        <linearGradient id="screen-color" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#254f69"/><stop offset=".6" stopColor="#143342"/><stop offset="1" stopColor="#131b2d"/></linearGradient>
+        <linearGradient id="chair-color" x1="0" x2=".8" y1="0" y2="1"><stop stopColor={mesh ? '#657275' : '#bdc0bc'}/><stop offset="1" stopColor={mesh ? '#323d42' : '#8e9799'}/></linearGradient>
+        <linearGradient id="desktop" x1="0" x2="1" y1="0" y2="0"><stop stopColor={pro ? '#9c8069' : '#c7b098'}/><stop offset="1" stopColor={pro ? '#705744' : '#aa8b71'}/></linearGradient>
+        <filter id="floor-shadow" x="-40%" y="-100%" width="180%" height="300%"><feGaussianBlur stdDeviation="20"/></filter>
+        <pattern id="floor-grid" width="72" height="72" patternUnits="userSpaceOnUse"><path d="M72 0H0V72" fill="none" stroke="#aeb9bb" strokeWidth=".8" opacity=".2"/></pattern>
       </defs>
-      <path d="M0 0H900V441L0 496Z" fill="url(#wall)"/>
-      <path d="M0 496L900 441V650H0Z" fill="url(#floor)"/>
-      <path d="M0 496L900 441" stroke="#c3bfb1" strokeWidth="3"/>
-      <path d="M70 550L845 497M0 613L900 553" stroke="#c0bbaa" strokeWidth="1" opacity=".32"/>
-      <path d="M240 491L155 650M550 461L610 650M790 451L900 615" stroke="#bcb7a9" strokeWidth="1" opacity=".22"/>
-      {/* Light falling in from the window */}
-      <path d="M120 0H510L390 444L35 465Z" fill="#fffef5" opacity=".13"/>
-      <g opacity=".78"><rect x="637" y="72" width="162" height="194" rx="3" fill="#c7c5b6"/><rect x="646" y="81" width="144" height="176" fill="#e4e7dc"/><path d="M718 81V257M646 169H790" stroke="#c8cfc5" strokeWidth="8"/><path d="M648 230Q688 205 721 235T789 229V257H648" fill="#a7b6a6" opacity=".5"/><path d="M648 234Q680 223 715 245T789 223V257H648" fill="#8c9d8d" opacity=".45"/></g>
-      {/* Wall art */}
-      <g><rect x="112" y="101" width="144" height="172" fill="#aea99a" opacity=".25"/><rect x="119" y="94" width="144" height="172" fill="#f8f4e9" stroke="#a59a84" strokeWidth="6"/><circle cx="187" cy="162" r="32" fill="#d4b693"/><path d="M136 246L169 178L197 207L219 167L246 246Z" fill="#829281"/><path d="M136 246L186 207L212 225L246 194V246Z" fill="#5f7569"/></g>
-      <ellipse cx="468" cy="554" rx="307" ry="48" fill="#4b493f" opacity=".13" filter="url(#softShadow)"/>
-      {/* Desk lower frame */}
-      <motion.g animate={{ opacity: 1 }} transition={transition}>
-        <path d="M192 340L226 347L216 556L184 559Z" fill="#777871"/><path d="M211 367L226 365L216 556L205 559Z" fill="#585e59"/>
-        <path d="M696 318L726 327L748 525L716 530Z" fill="#6b706a"/><path d="M715 349L728 354L748 525L735 529Z" fill="#555b56"/>
-        <path d="M218 469L721 444" stroke="#787d76" strokeWidth="12"/>
+
+      <rect width="900" height="630" fill="url(#studio-wall)"/>
+      <path d="M0 467L900 425V630H0Z" fill="url(#studio-floor)"/>
+      <path d="M0 467L900 425V630H0Z" fill="url(#floor-grid)"/>
+      <path d="M0 467L900 425" stroke="#cbd1d3" strokeWidth="2"/>
+      <path d="M65 0H300L95 456H0Z" fill="#fff" opacity=".45"/>
+      <path d="M672 0H900V345Z" fill="#fff" opacity=".2"/>
+      <ellipse cx="456" cy="523" rx="326" ry="45" fill="#243034" opacity=".18" filter="url(#floor-shadow)"/>
+      <motion.rect width="900" height="630" animate={{ fill: evening ? '#172333' : '#101820', opacity: evening ? .19 : 0 }} transition={transition} pointerEvents="none"/>
+
+      {/* Telescoping legs stay anchored while the desktop lifts. */}
+      <path d="M198 484L190 552L220 551L226 484Z" fill="#2e383c"/>
+      <path d="M709 462L729 543L756 541L742 458Z" fill="#303a3d"/>
+      <motion.path animate={{ d: stand ? 'M195 283L223 287L218 494L194 493Z' : 'M195 341L223 345L218 494L194 493Z' }} transition={transition} fill="#525d61"/>
+      <motion.path animate={{ d: stand ? 'M698 263L727 276L741 474L716 476Z' : 'M698 321L727 334L741 474L716 476Z' }} transition={transition} fill="#4a565b"/>
+      <path d="M222 482L714 462" fill="none" stroke="#495357" strokeWidth="12"/>
+      <path d="M190 551h37m502-8h37" stroke="#252d31" strokeWidth="8" strokeLinecap="round"/>
+
+      <motion.g animate={{ y: lift }} transition={transition}>
+        {/* Desk surfaces share one perspective — switching variant changes proportions and finish. */}
+        <motion.path animate={{ fill: pro ? '#846a55' : '#b89b81' }} transition={transition}
+          d={pro ? 'M103 307L640 260L802 324L257 390Z' : 'M124 310L629 267L779 329L270 390Z'} stroke="#75665d" strokeWidth="1.5"/>
+        <path d={pro ? 'M257 390L802 324V342L257 409Z' : 'M270 390L779 329V344L270 407Z'} fill={pro ? '#604e3f' : '#9b806c'}/>
+        <path d={pro ? 'M103 307L257 390V409L103 326Z' : 'M124 310L270 390V407L124 325Z'} fill={pro ? '#8f7661' : '#ad927d'}/>
+        <path d="M164 310L625 275" stroke="#fff" strokeWidth="2.2" opacity=".28"/>
+        <path d="M293 385L741 330" stroke="#f1d8b9" strokeWidth="1.3" opacity=".22"/>
+
+        <AnimatePresence>
+          {display && <motion.g key={display} {...entry}>
+            <ellipse cx="473" cy="319" rx="57" ry="11" fill="#1b292c" opacity=".16"/>
+            <path d="M468 268l9 -3l8 58l-13 2Z" fill="#4a555c"/>
+            <path d="M433 322L501 312L522 326L445 335Z" fill="#3c474c"/>
+            {display === 'ultrawide' ? <>
+              <path d="M284 143Q454 125 640 134Q651 135 651 148L656 271Q655 283 641 290L294 308Q280 310 279 296L271 158Q271 146 284 143Z" fill="#1e282e"/>
+              <path d="M286 155Q461 139 636 147L641 275L293 295Z" fill="url(#screen-color)"/>
+              <path d="M294 282Q365 177 454 233T637 169V277L294 295Z" fill="#317390" opacity=".72"/>
+              <path d="M298 270Q405 180 468 224T636 175" stroke="#a7d5e4" strokeWidth="3" opacity=".6" fill="none"/>
+            </> : <>
+              <path d="M329 145L608 130Q620 129 620 141L627 290Q627 302 613 304L339 322Q327 323 326 311L317 160Q317 149 329 145Z" fill="#202b30"/>
+              <path d="M331 158L608 143L615 290L342 308Z" fill="url(#screen-color)"/>
+              <path d="M340 287Q416 192 472 236T610 181V290L343 306Z" fill="#276a87" opacity=".74"/>
+              <path d="M344 281Q417 214 474 244T611 182" stroke="#afd8e1" strokeWidth="3" opacity=".56" fill="none"/>
+            </>}
+            <circle cx="480" cy="302" r="2" fill="#a4b0ad"/>
+          </motion.g>}
+          {has('lamp') && <motion.g key="lamp" {...entry}>
+            <ellipse cx="683" cy="335" rx="36" ry="9" fill="#3a4342" opacity=".17"/>
+            <path d="M685 328L683 215L726 169" stroke="#3d474a" strokeWidth="9" fill="none" strokeLinecap="round"/>
+            <circle cx="683" cy="216" r="8" fill="#758285"/>
+            <path d="M707 162Q731 150 752 174L756 190L704 198Z" fill="#69777b" stroke="#333d40" strokeWidth="2"/>
+            <path d="M660 332L704 322L733 334L690 342Z" fill="#3f4c4f"/>
+            <path d="M710 199L757 190L786 291L671 307Z" fill="#ffe0a0" opacity={evening ? '.3' : '.13'}/>
+          </motion.g>}
+          {has('plant') && <motion.g key="plant" {...entry}>
+            <ellipse cx="243" cy="349" rx="35" ry="8" fill="#55564c" opacity=".14"/>
+            <path d="M219 304L275 300L267 351Q246 362 228 348Z" fill="#ad8069"/>
+            <path d="M222 306L273 302" stroke="#dfb095" strokeWidth="3"/>
+            <path d="M246 305Q227 259 207 242M246 305Q262 260 288 239M246 305Q248 247 246 226" stroke="#44684d" strokeWidth="4" fill="none"/>
+            <ellipse cx="214" cy="250" rx="12" ry="29" transform="rotate(-40 214 250)" fill="#548465"/>
+            <ellipse cx="277" cy="254" rx="12" ry="29" transform="rotate(40 277 254)" fill="#6b9874"/>
+            <ellipse cx="247" cy="237" rx="12" ry="33" fill="#3d7659"/>
+            <ellipse cx="227" cy="277" rx="10" ry="22" transform="rotate(-54 227 277)" fill="#8fac7b"/>
+            <ellipse cx="266" cy="277" rx="10" ry="22" transform="rotate(55 266 277)" fill="#649574"/>
+          </motion.g>}
+          {has('keyboard') && <motion.g key="keyboard" {...entry}>
+            <path d="M376 347L530 329L557 349L393 371Z" fill="#c8cfce" stroke="#838d8f" strokeWidth="2"/>
+            {Array.from({ length: 3 }, (_, row) => Array.from({ length: 11 }, (_, col) => <path key={`${row}-${col}`} d={`M${390 + col * 12 + row * 2} ${349 + row * 6 - col * 1.18}l7 -.9`} stroke="#69777a" strokeWidth="2" strokeLinecap="round"/>))}
+            <ellipse cx="593" cy="345" rx="15" ry="8" transform="rotate(-12 593 345)" fill="#a8b3b1"/>
+          </motion.g>}
+        </AnimatePresence>
       </motion.g>
-      {/* Desk surface */}
-      <motion.g animate={{ fill: woodTop }} transition={transition}>
-        <path d="M137 323L638 275L783 339L275 397Z" fill={woodTop} stroke={woodEdge} strokeWidth="2"/>
-      </motion.g>
-      <motion.path d="M275 397L783 339V354L275 412Z" animate={{ fill: woodEdge }} transition={transition}/>
-      <motion.path d="M137 323L275 397V412L137 336Z" animate={{ fill: darkDesk ? '#694833' : '#c49c76' }} transition={transition}/>
-      <path d="M166 327L641 283" stroke="#fff9ed" strokeWidth="2" opacity=".35"/>
-      {/* Desk items behind chair */}
-      {has('monitor') && <motion.g {...animated} transition={transition}>
-        <ellipse cx="473" cy="333" rx="66" ry="12" fill="#292e2b" opacity=".13"/>
-        <path d="M469 282L481 279L485 333L471 334Z" fill="#5d6562"/><path d="M432 330L511 321L527 333L448 342Z" fill="#646a66"/>
-        <path d="M330 151L614 132Q623 132 624 141L632 299Q632 306 622 307L339 329Q329 329 328 319L320 162Q320 153 330 151Z" fill="#303b38"/>
-        <path d="M336 163L607 145L615 293L344 314Z" fill="url(#glass)"/>
-        <path d="M344 314L615 293" stroke="#8c9690" strokeWidth="2"/>
-        <path d="M337 161L608 144L608 152L337 170Z" fill="#71847a" opacity=".3"/>
-        <path d="M361 281Q426 192 488 238T608 175V292L349 307Z" fill="#537b70" opacity=".65"/>
-        <path d="M346 280Q409 214 462 249T612 191" stroke="#d2d7bd" strokeWidth="3" fill="none" opacity=".45"/>
-        <circle cx="478" cy="305" r="2" fill="#abb2a9"/>
-      </motion.g>}
-      {has('lamp') && <motion.g {...animated} transition={transition}>
-        <ellipse cx="685" cy="337" rx="28" ry="8" fill="#6d6b5d" opacity=".3"/>
-        <path d="M681 327L681 223L724 178" stroke="#676962" strokeWidth="9" fill="none" strokeLinecap="round"/>
-        <circle cx="681" cy="222" r="8" fill="#8f9389"/>
-        <path d="M710 162Q734 151 751 174L755 189L709 194Z" fill="#e9ddc4" stroke="#a99f8a" strokeWidth="2"/>
-        <path d="M688 329L710 321L728 330L705 340Z" fill="#696f69"/>
-        <path d="M712 195L759 188L782 290L673 304Z" fill="#fff4c8" opacity=".18"/>
-      </motion.g>}
-      {has('plant') && <motion.g {...animated} transition={transition}>
-        <ellipse cx="251" cy="345" rx="31" ry="9" fill="#5a554c" opacity=".13"/>
-        <path d="M226 302L277 298L270 349Q251 359 235 347Z" fill="#b77355"/>
-        <path d="M229 307L275 302" stroke="#e5a083" strokeWidth="3"/>
-        <path d="M250 304Q232 261 213 240M250 305Q266 267 291 239M251 299Q250 250 250 227" stroke="#526d4e" strokeWidth="4" fill="none"/>
-        <ellipse cx="218" cy="253" rx="12" ry="28" transform="rotate(-42 218 253)" fill="#567b5e"/>
-        <ellipse cx="280" cy="256" rx="12" ry="29" transform="rotate(38 280 256)" fill="#739375"/>
-        <ellipse cx="251" cy="238" rx="12" ry="32" fill="#486e58"/>
-        <ellipse cx="232" cy="277" rx="10" ry="23" transform="rotate(-58 232 277)" fill="#8a9c73"/>
-        <ellipse cx="268" cy="279" rx="10" ry="22" transform="rotate(48 268 279)" fill="#5e8163"/>
-      </motion.g>}
-      {has('keyboard') && <motion.g {...animated} transition={transition}>
-        <path d="M368 347L536 328L563 348L388 371Z" fill="#eae7dc" stroke="#b5b8ad" strokeWidth="2"/>
-        {Array.from({ length: 4 }, (_, row) => Array.from({ length: 12 }, (_, col) => <path key={`${row}-${col}`} d={`M${383 + col * 13 + row * 2} ${349 + row * 5 - col * 1.32}l8 -1`} stroke="#9aa49c" strokeWidth="2.2" strokeLinecap="round"/>))}
-        <ellipse cx="600" cy="350" rx="13" ry="7" transform="rotate(-10 600 350)" fill="#e5e2d9"/>
-      </motion.g>}
-      {/* Chair in foreground */}
-      <ellipse cx="475" cy="566" rx="116" ry="22" fill="#514f43" opacity=".13"/>
-      <path d="M463 470L471 554" stroke="#626660" strokeWidth="17" strokeLinecap="round"/>
-      <path d="M470 551L390 579M470 551L549 567M470 551L474 594" stroke="#656b65" strokeWidth="12" strokeLinecap="round"/>
-      <circle cx="387" cy="580" r="8" fill="#4c524e"/><circle cx="550" cy="567" r="8" fill="#4c524e"/><circle cx="474" cy="596" r="8" fill="#4c524e"/>
-      <motion.path d="M363 324Q355 300 378 291Q422 271 472 290Q509 302 509 335L518 459Q520 483 495 492Q438 509 393 482Q378 477 376 457Z" animate={{ fill: chairMain }} transition={transition} stroke="#424c47" strokeWidth="3"/>
-      <motion.path d="M380 324Q385 304 418 300Q461 294 488 317L498 459Q447 479 394 461Z" animate={{ fill: chairLight }} transition={transition} opacity=".75"/>
-      <path d="M422 307Q433 361 433 466" stroke="#fff" strokeWidth="2" opacity=".12" fill="none"/>
-      <motion.path d="M368 457Q421 476 505 455L540 490Q495 523 412 514L359 482Q348 472 368 457Z" animate={{ fill: chairMain }} transition={transition} stroke="#424c47" strokeWidth="3"/>
-      <motion.path d="M374 468Q443 491 505 467L521 489Q472 507 417 500Z" animate={{ fill: chairLight }} transition={transition} opacity=".65"/>
-      <path d="M375 397L345 435L362 470M505 398L544 431L527 481" stroke="#545d56" strokeWidth="12" fill="none" strokeLinecap="round"/>
-      <path d="M331 436L369 443M524 432L559 441" stroke="#737c74" strokeWidth="10" strokeLinecap="round"/>
-      <rect width="900" height="650" fill="url(#grain)" opacity=".16" pointerEvents="none"/>
+
+      {/* Chair stays grounded independently of sit / stand controls. */}
+      <ellipse cx="458" cy="572" rx="107" ry="20" fill="#1b252b" opacity=".12"/>
+      <path d="M457 473L466 556" stroke="#465156" strokeWidth="16" strokeLinecap="round"/>
+      <path d="M465 554L390 577M465 554L543 571M465 554L470 591" stroke="#414c50" strokeWidth="12" strokeLinecap="round"/>
+      <circle cx="390" cy="577" r="7" fill="#30383b"/><circle cx="543" cy="571" r="7" fill="#30383b"/><circle cx="470" cy="591" r="7" fill="#30383b"/>
+      <motion.path d="M363 324Q352 294 379 284Q428 262 477 289Q502 302 507 338L517 459Q520 480 494 494Q442 506 394 482Q379 475 375 459Z"
+        animate={{ fill: mesh ? '#354146' : '#a7aaa5' }} transition={transition} stroke="#374247" strokeWidth="4"/>
+      <motion.path d="M382 323Q390 306 418 297Q461 293 482 320L494 459Q447 477 394 460Z" animate={{ fill: mesh ? '#677679' : '#caccc6' }} transition={transition} opacity=".72"/>
+      {mesh && <g stroke="#b4c2c0" opacity=".16" strokeWidth="1.1"><path d="M405 306v158M424 301v166M444 301v169M462 308v156"/></g>}
+      <motion.path d="M369 459Q425 476 503 458L541 487Q496 517 412 513L361 482Q347 469 369 459Z" animate={{ fill: mesh ? '#3b484d' : '#a1a6a1' }} transition={transition} stroke="#313c41" strokeWidth="3"/>
+      <motion.path d="M375 467Q442 490 501 469L520 489Q467 501 418 497Z" animate={{ fill: mesh ? '#657276' : '#c1c4bd' }} transition={transition}/>
+      <path d="M374 396L344 435L361 469M504 396L544 432L525 481" stroke="#485357" strokeWidth="11" fill="none" strokeLinecap="round"/>
+      <path d="M332 438L368 443M525 431L560 441" stroke="#657378" strokeWidth="10" strokeLinecap="round"/>
+      <motion.rect width="900" height="630" animate={{ fill: '#0b1d36', opacity: evening ? .13 : 0 }} transition={transition} pointerEvents="none"/>
     </svg>
   );
 }
