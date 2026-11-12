@@ -1,7 +1,7 @@
 import {
   accessories, accessoryIds, chairs, desks, formatPrice, totalFor,
   type AccessoryId, type PlanId, type Setup,
-} from './catalog';
+} from './catalog.ts';
 
 export type WorkStyle = 'engineering' | 'creative' | 'everyday';
 export type Footprint = 'compact' | 'roomy';
