@@ -74,7 +74,7 @@ When a shared URL contains valid setup parameters, it takes precedence over save
 
 ## Project structure
 
-\`\`\`text
+```text
 src/
   app/
     page.tsx                 Main route
@@ -97,37 +97,37 @@ tests/
   unslop.spec.ts             Readability and layout regressions
 .github/workflows/
   checks.yml                Automated quality checks
-\`\`\`
+```
 
 ## Running locally
 
 **Requirements:** Node.js 22 and npm.
 
-\`\`\`bash
+```bash
 git clone https://github.com/halil-yesilyurt/workspace-studio.git
 cd workspace-studio
 npm ci
 npm run dev
-\`\`\`
+```
 
-Open \`http://localhost:3000\`.
+Open `http://localhost:3000`.
 
 No environment variables or API keys are needed. The repository is private, so cloning requires an account with access.
 
 ### Quality checks
 
-\`\`\`bash
+```bash
 npm test
 npm run lint
 npm run typecheck
 npm run build
 npx playwright install chromium
 npm run test:e2e
-\`\`\`
+```
 
 Browser tests start the application automatically. On CI they use the **production** Next.js server after a successful build; locally they can reuse a development server.
 
-GitHub Actions runs the checks on pushes to \`main\` and on pull requests. The test suite includes:
+GitHub Actions runs the checks on pushes to `main` and on pull requests. The test suite includes:
 
 - Catalog and pricing totals for both rental periods
 - Validation of share links, restored state, and mutually exclusive displays
