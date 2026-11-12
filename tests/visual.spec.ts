@@ -60,3 +60,18 @@ test('reduced-motion users can still build and review a workspace', async ({ pag
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).not.toBeVisible();
 });
+
+
+test('small phones and tablets keep all controls inside the viewport', async ({ page }, testInfo) => {
+  for (const width of [320, 375, 768]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    await page.getByRole('tab', { name: /03 Accessories/ }).click();
+    await expect(page.getByRole('button', { name: /Smart Desk Lamp/ })).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow, `Unexpected horizontal overflow at ${width}px`).toBeLessThanOrEqual(1);
+    if (width === 320) {
+      await page.screenshot({ path: testInfo.outputPath('small-phone-320px.png'), fullPage: true, animations: 'disabled' });
+    }
+  }
+});
