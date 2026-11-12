@@ -68,7 +68,7 @@ test('guided finder explains a recommendation and updates the live scene', async
   await dialog.getByRole('button', { name: /More screen space/ }).click();
   await expect(dialog.getByRole('heading', { name: /Meet The Creative Flow/ })).toBeVisible();
   await expect(dialog.getByText('Why this fits')).toBeVisible();
-  await expect(dialog.getByText('RECOMMENDED')).toBeVisible();
+  await expect(dialog.getByText('RECOMMENDED', { exact: true })).toBeVisible();
   await dialog.getByRole('button', { name: /Build this workspace/ }).click();
   await expect(dialog).not.toBeVisible();
   await expect(page.getByRole('img', { name: /dual motor desk.*ultrawide/ })).toBeVisible();
