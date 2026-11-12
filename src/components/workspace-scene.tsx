@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import type { Setup } from '@/lib/catalog';
 
@@ -13,6 +14,9 @@ export function WorkspaceScene({ setup, height = 'sit', lighting = 'day' }: {
   lighting?: Lighting;
 }) {
   const reduced = useReducedMotion();
+  // Multiple previews (e.g. side-by-side comparisons) must not share SVG paint IDs.
+  const prefix = useId().replaceAll(':', '');
+  const paint = (name: string) => `url(#${prefix}-${name})`;
   const stand = height === 'stand';
   const evening = lighting === 'evening';
   const has = (id: Setup['accessories'][number]) => setup.accessories.includes(id);
@@ -27,22 +31,22 @@ export function WorkspaceScene({ setup, height = 'sit', lighting = 'day' }: {
     <svg viewBox="0 0 900 630" className="workspace-svg" role="img"
       aria-label={`Workspace preview: ${pro ? 'dual motor' : 'electric'} desk at ${height} height, ${mesh ? 'mesh' : 'comfort'} chair, ${setup.accessories.join(', ') || 'no accessories'}, ${lighting} lighting`}>
       <defs>
-        <linearGradient id="studio-wall" x1="0" x2="0" y1="0" y2="1"><stop stopColor="#fafafa"/><stop offset="1" stopColor="#f0f2f2"/></linearGradient>
-        <linearGradient id="studio-floor" x1="0" x2=".5" y1="0" y2="1"><stop stopColor="#e9ebec"/><stop offset="1" stopColor="#d9dfe1"/></linearGradient>
-        <linearGradient id="screen-color" x1="0" x2="1" y1="0" y2="1"><stop stopColor="#254f69"/><stop offset=".6" stopColor="#143342"/><stop offset="1" stopColor="#131b2d"/></linearGradient>
-        <linearGradient id="chair-color" x1="0" x2=".8" y1="0" y2="1"><stop stopColor={mesh ? '#657275' : '#bdc0bc'}/><stop offset="1" stopColor={mesh ? '#323d42' : '#8e9799'}/></linearGradient>
-        <linearGradient id="desktop" x1="0" x2="1" y1="0" y2="0"><stop stopColor={pro ? '#9c8069' : '#c7b098'}/><stop offset="1" stopColor={pro ? '#705744' : '#aa8b71'}/></linearGradient>
-        <filter id="floor-shadow" x="-40%" y="-100%" width="180%" height="300%"><feGaussianBlur stdDeviation="20"/></filter>
-        <pattern id="floor-grid" width="72" height="72" patternUnits="userSpaceOnUse"><path d="M72 0H0V72" fill="none" stroke="#aeb9bb" strokeWidth=".8" opacity=".2"/></pattern>
+        <linearGradient id={`${prefix}-studio-wall`} x1="0" x2="0" y1="0" y2="1"><stop stopColor="#fafafa"/><stop offset="1" stopColor="#f0f2f2"/></linearGradient>
+        <linearGradient id={`${prefix}-studio-floor`} x1="0" x2=".5" y1="0" y2="1"><stop stopColor="#e9ebec"/><stop offset="1" stopColor="#d9dfe1"/></linearGradient>
+        <linearGradient id={`${prefix}-screen-color`} x1="0" x2="1" y1="0" y2="1"><stop stopColor="#254f69"/><stop offset=".6" stopColor="#143342"/><stop offset="1" stopColor="#131b2d"/></linearGradient>
+        <linearGradient id={`${prefix}-chair-color`} x1="0" x2=".8" y1="0" y2="1"><stop stopColor={mesh ? '#657275' : '#bdc0bc'}/><stop offset="1" stopColor={mesh ? '#323d42' : '#8e9799'}/></linearGradient>
+        <linearGradient id={`${prefix}-desktop`} x1="0" x2="1" y1="0" y2="0"><stop stopColor={pro ? '#9c8069' : '#c7b098'}/><stop offset="1" stopColor={pro ? '#705744' : '#aa8b71'}/></linearGradient>
+        <filter id={`${prefix}-floor-shadow`} x="-40%" y="-100%" width="180%" height="300%"><feGaussianBlur stdDeviation="20"/></filter>
+        <pattern id={`${prefix}-floor-grid`} width="72" height="72" patternUnits="userSpaceOnUse"><path d="M72 0H0V72" fill="none" stroke="#aeb9bb" strokeWidth=".8" opacity=".2"/></pattern>
       </defs>
 
-      <rect width="900" height="630" fill="url(#studio-wall)"/>
-      <path d="M0 467L900 425V630H0Z" fill="url(#studio-floor)"/>
-      <path d="M0 467L900 425V630H0Z" fill="url(#floor-grid)"/>
+      <rect width="900" height="630" fill={paint('studio-wall')}/>
+      <path d="M0 467L900 425V630H0Z" fill={paint('studio-floor')}/>
+      <path d="M0 467L900 425V630H0Z" fill={paint('floor-grid')}/>
       <path d="M0 467L900 425" stroke="#cbd1d3" strokeWidth="2"/>
       <path d="M65 0H300L95 456H0Z" fill="#fff" opacity=".45"/>
       <path d="M672 0H900V345Z" fill="#fff" opacity=".2"/>
-      <ellipse cx="456" cy="523" rx="326" ry="45" fill="#243034" opacity=".18" filter="url(#floor-shadow)"/>
+      <ellipse cx="456" cy="523" rx="326" ry="45" fill="#243034" opacity=".18" filter={paint('floor-shadow')}/>
       <motion.rect width="900" height="630" animate={{ fill: evening ? '#172333' : '#101820', opacity: evening ? .19 : 0 }} transition={transition} pointerEvents="none"/>
 
       {/* Telescoping legs stay anchored while the desktop lifts. */}
@@ -69,12 +73,12 @@ export function WorkspaceScene({ setup, height = 'sit', lighting = 'day' }: {
             <path d="M433 322L501 312L522 326L445 335Z" fill="#3c474c"/>
             {display === 'ultrawide' ? <>
               <path d="M284 143Q454 125 640 134Q651 135 651 148L656 271Q655 283 641 290L294 308Q280 310 279 296L271 158Q271 146 284 143Z" fill="#1e282e"/>
-              <path d="M286 155Q461 139 636 147L641 275L293 295Z" fill="url(#screen-color)"/>
+              <path d="M286 155Q461 139 636 147L641 275L293 295Z" fill={paint('screen-color')}/>
               <path d="M294 282Q365 177 454 233T637 169V277L294 295Z" fill="#317390" opacity=".72"/>
               <path d="M298 270Q405 180 468 224T636 175" stroke="#a7d5e4" strokeWidth="3" opacity=".6" fill="none"/>
             </> : <>
               <path d="M329 145L608 130Q620 129 620 141L627 290Q627 302 613 304L339 322Q327 323 326 311L317 160Q317 149 329 145Z" fill="#202b30"/>
-              <path d="M331 158L608 143L615 290L342 308Z" fill="url(#screen-color)"/>
+              <path d="M331 158L608 143L615 290L342 308Z" fill={paint('screen-color')}/>
               <path d="M340 287Q416 192 472 236T610 181V290L343 306Z" fill="#276a87" opacity=".74"/>
               <path d="M344 281Q417 214 474 244T611 182" stroke="#afd8e1" strokeWidth="3" opacity=".56" fill="none"/>
             </>}
