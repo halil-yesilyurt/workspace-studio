@@ -29,7 +29,7 @@ export type Setup = {
 export const desks: Record<DeskId, Product> = {
   electric: {
     id: 'electric', name: 'Electric Standing Desk', description: 'The everyday upgrade',
-    detail: 'Motorized height adjustment · 120 × 70 cm', weekly: 12, monthly: 39, badge: 'POPULAR',
+    detail: 'Motorized height adjustment · 120 × 70 cm', weekly: 12, monthly: 39, badge: 'ESSENTIAL',
   },
   dual: {
     id: 'dual', name: 'Dual-Motor Pro Desk', description: 'Extra space, extra steady',
@@ -39,7 +39,7 @@ export const desks: Record<DeskId, Product> = {
 export const chairs: Record<ChairId, Product> = {
   mesh: {
     id: 'mesh', name: 'Ergonomic Mesh Chair', description: 'Support for long sessions',
-    detail: 'Breathable mesh · adjustable lumbar', weekly: 9, monthly: 29, badge: 'POPULAR',
+    detail: 'Breathable mesh · adjustable lumbar', weekly: 9, monthly: 29, badge: 'ESSENTIAL',
   },
   comfort: {
     id: 'comfort', name: 'Comfort Office Chair', description: 'A softer way to sit',
@@ -49,7 +49,7 @@ export const chairs: Record<ChairId, Product> = {
 export const accessories: Record<AccessoryId, Product> = {
   monitor: {
     id: 'monitor', name: '27” 4K Monitor', description: 'Sharper everyday work',
-    detail: '4K resolution · USB-C ready', weekly: 8, monthly: 26, badge: 'INSTANT',
+    detail: '4K resolution · USB-C ready', weekly: 8, monthly: 26, badge: '4K',
   },
   ultrawide: {
     id: 'ultrawide', name: '34” Curved Monitor', description: 'Space for every window',
