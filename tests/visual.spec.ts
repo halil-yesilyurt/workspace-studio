@@ -30,6 +30,7 @@ test('mobile: capture responsive layout without horizontal scroll', async ({ pag
   await page.getByRole('dialog').getByRole('button', { name: /Code & build/ }).click();
   await page.getByRole('dialog').getByRole('button', { name: /A cozy corner/ }).click();
   await page.getByRole('dialog').getByRole('button', { name: /Keep it practical/ }).click();
+  await expect(page.getByRole('dialog').getByRole('heading', { name: /Meet The Deep Work Desk/ })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('mobile-finder.png'), fullPage: true, animations: 'disabled' });
   expect(errors).toEqual([]);
 });
