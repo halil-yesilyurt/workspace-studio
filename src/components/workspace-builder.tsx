@@ -214,7 +214,7 @@ function ProductCard({ id, selected, period, onClick, multiple = false }: {
 }) {
   const item = (id in desks ? desks[id as DeskId] : id in chairs ? chairs[id as ChairId] : accessories[id as AccessoryId]);
   return <button type="button" className={`product-card ${selected ? 'is-selected' : ''}`} onClick={onClick} aria-pressed={selected} aria-label={`${item.name}, ${formatPrice(period === 'week' ? item.weekly : item.monthly)} per ${period}, ${selected ? 'selected' : multiple ? 'add to setup' : 'select'}`}>
-    <span className="product-image"><ProductArt id={id}/>{item.badge && <span className={`badge ${item.badge === 'INSTANT' ? 'badge-green' : ''}`}>{item.badge}</span>}<span className={`card-select ${selected ? 'chosen' : ''}`}>{selected ? <Check size={15}/> : multiple ? '+' : <span className="radio-center"/>}</span></span>
+    <span className="product-image"><ProductArt id={id}/>{item.badge && <span className={`badge ${item.badge === '4K' ? 'badge-green' : ''}`}>{item.badge}</span>}<span className={`card-select ${selected ? 'chosen' : ''}`}>{selected ? <Check size={15}/> : multiple ? '+' : <span className="radio-center"/>}</span></span>
     <span className="card-details"><strong>{item.name}</strong><small>{item.detail}</small><span className="card-bottom"><span><b>{formatPrice(period === 'week' ? item.weekly : item.monthly)}</b><em>/{period}</em></span><span className={`card-action ${selected ? 'selected' : ''}`}>{selected ? 'Selected' : multiple ? 'Add item' : 'Choose'} <ChevronRight size={13}/></span></span></span>
   </button>;
 }
