@@ -96,6 +96,7 @@ tests/
   visual.spec.ts             Browser errors, screenshots, responsive behavior
   unslop.spec.ts             Readability and layout regressions
   submission.spec.ts         Saved-state restoration and share-link priority
+  scene-paint.spec.ts        First-render geometry and sit/stand transitions
 .github/workflows/
   checks.yml                Automated quality checks
 ```
