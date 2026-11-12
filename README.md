@@ -95,6 +95,7 @@ tests/
   workspace.spec.ts          End-to-end product and review journeys
   visual.spec.ts             Browser errors, screenshots, responsive behavior
   unslop.spec.ts             Readability and layout regressions
+  submission.spec.ts         Saved-state restoration and share-link priority
 .github/workflows/
   checks.yml                Automated quality checks
 ```
@@ -130,7 +131,7 @@ Browser tests start the application automatically. On CI they use the **producti
 GitHub Actions runs the checks on pushes to `main` and on pull requests. The test suite includes:
 
 - Catalog and pricing totals for both rental periods
-- Validation of share links, restored state, and mutually exclusive displays
+- Validation of share links, persisted state, and mutually exclusive displays
 - All **36 combinations** of the Finder's work style, room size, priority, and rental period
 - Desk, chair, and accessory selection through the browser
 - Review summary, dialog focus and Escape-to-close behavior
