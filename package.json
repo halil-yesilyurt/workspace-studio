@@ -29,5 +29,8 @@
     "eslint-config-next": "^15.5.0",
     "@playwright/test": "^1.56.0"
   },
-  "type": "module"
+  "type": "module",
+  "overrides": {
+    "postcss": "^8.5.23"
+  }
 }
